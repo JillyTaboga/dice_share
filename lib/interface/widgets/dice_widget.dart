@@ -15,12 +15,12 @@ class DiceResulWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return DiceContainer(
       color: _diceColor(diceRoll.dice),
-      sides: _sidesToPolygon[diceRoll.dice.sides.length] ?? 6,
+      sides: _sidesToPolygon[diceRoll.dice.sides.length] ?? 4,
       child: Center(
         child: Text(
           diceRoll.rolledSide.label,
           style: const TextStyle(
-            fontSize: 20,
+            fontSize: 16,
             fontWeight: FontWeight.bold,
           ),
         ),

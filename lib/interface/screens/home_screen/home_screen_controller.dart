@@ -19,6 +19,20 @@ class RollNotifier extends StateNotifier<RollEntity> {
           ),
         );
 
+  roll() {
+    final newRoll = state.copyWith(
+      guid: const Uuid().v4(),
+      createdAt: DateTime.now(),
+      diceRolls: state.diceRolls
+          .map(
+            (e) => DiceRollEntity.fromDice(e.dice),
+          )
+          .toList(),
+    );
+
+    state = newRoll;
+  }
+
   addDice(DiceEntity dice) {
     state = state.copyWith(
       diceRolls: state.diceRolls

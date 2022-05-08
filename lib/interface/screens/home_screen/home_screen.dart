@@ -127,6 +127,7 @@ class ActionBar extends ConsumerWidget {
                 const Spacer(),
                 ElevatedButton.icon(
                   onPressed: () {
+                    ref.read(rollProvider.notifier).roll();
                     final roll = ref.read(rollProvider);
                     showDialog(
                         context: context,
@@ -159,7 +160,7 @@ class DiceTray extends ConsumerWidget {
   Widget build(BuildContext context, ref) {
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).primaryColor,
+        color: Colors.grey.shade200,
         boxShadow: kElevationToShadow[3],
         border: const Border(
           top: BorderSide(

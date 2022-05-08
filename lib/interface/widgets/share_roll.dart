@@ -1,5 +1,7 @@
 import 'package:dice_share/domain/entities/roll_entity.dart';
+import 'package:dice_share/interface/widgets/dice_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class SharedRoll extends StatelessWidget {
   const SharedRoll({
@@ -13,40 +15,66 @@ class SharedRoll extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 120,
-      width: 300,
+      width: 350,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(10),
       ),
       padding: const EdgeInsets.all(8),
-      child: Row(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Expanded(
-            child: Wrap(),
-          ),
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
+          Text(
+              'Rolagem em ${DateFormat('dd/MM/yy HH:mm:ss').format(roll.createdAt)}'),
+          Row(
             children: [
-              Text(
-                '$modifierSignal${roll.modifier.toString()}',
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
+              Expanded(
+                child: Wrap(
+                  alignment: WrapAlignment.center,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: roll.diceRolls.map(
+                    (e) {
+                      const size = 250 / 5;
+                      return SizedBox.square(
+                        dimension: size,
+                        child: DiceResulWidget(
+                          diceRoll: e,
+                        ),
+                      );
+                    },
+                  ).toList(),
                 ),
               ),
-            ],
-          ),
-          Center(
-            child: Text(
-              ' = ${roll.total.toString()}',
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const Text('Modificador:'),
+                  Text(
+                    '$modifierSignal${roll.modifier.toString()}',
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
               ),
-            ),
+              const Text(' = '),
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const Text('Total:'),
+                  Text(
+                    roll.total.toString(),
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
         ],
       ),
