@@ -195,6 +195,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.4"
+  flutter_polygon_clipper:
+    dependency: "direct main"
+    description:
+      name: flutter_polygon_clipper
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.4"
   flutter_riverpod:
     dependency: "direct main"
     description:

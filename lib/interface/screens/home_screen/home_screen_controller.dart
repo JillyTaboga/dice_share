@@ -36,15 +36,15 @@ class RollNotifier extends StateNotifier<RollEntity> {
     );
   }
 
-  addModifier(int modifier) {
+  addModifier() {
     state = state.copyWith(
-      modifier: state.modifier + 1,
+      modifier: (state.modifier + 1),
     );
   }
 
   removeModifier() {
     state = state.copyWith(
-      modifier: state.modifier - 1,
+      modifier: (state.modifier - 1),
     );
   }
 }

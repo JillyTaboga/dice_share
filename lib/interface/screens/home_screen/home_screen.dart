@@ -1,5 +1,7 @@
 import 'package:dice_share/data/data_bases/dices_types.dart';
 import 'package:dice_share/interface/screens/home_screen/home_screen_controller.dart';
+import 'package:dice_share/interface/widgets/dice_widget.dart';
+import 'package:dice_share/interface/widgets/share_roll.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -11,6 +13,7 @@ class HomeScreen extends ConsumerWidget {
     final dicesInRoll =
         ref.watch(rollProvider).diceRolls.map((e) => e.dice).toList();
     return Scaffold(
+      backgroundColor: Colors.grey.shade200,
       body: Column(
         children: [
           const SizedBox(height: 20),
@@ -27,29 +30,15 @@ class HomeScreen extends ConsumerWidget {
                       alignment: WrapAlignment.center,
                       children: dicesInRoll
                           .map(
-                            (e) => Container(
-                              clipBehavior: Clip.antiAlias,
-                              height: 80,
+                            (e) => SizedBox(
                               width: 80,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: Theme.of(context).primaryColor,
-                              ),
-                              child: Material(
-                                color: Colors.transparent,
-                                child: InkWell(
-                                  onTap: () => ref
-                                      .read(rollProvider.notifier)
-                                      .removeDice(dicesInRoll.indexOf(e)),
-                                  child: SizedBox.expand(
-                                    child: Center(
-                                      child: Text(
-                                        e.name,
-                                        style: const TextStyle(fontSize: 20),
-                                      ),
-                                    ),
-                                  ),
-                                ),
+                              child: DiceWidget(
+                                dice: e,
+                                onTap: () {
+                                  ref.read(rollProvider.notifier).removeDice(
+                                        dicesInRoll.indexOf(e),
+                                      );
+                                },
                               ),
                             ),
                           )
@@ -60,69 +49,150 @@ class HomeScreen extends ConsumerWidget {
               ),
             ),
           ),
-          Expanded(
+          const ActionBar(),
+          const Expanded(
             flex: 1,
-            child: Container(
-              decoration: BoxDecoration(
-                color: Theme.of(context).primaryColor,
-                boxShadow: kElevationToShadow[3],
-                border: const Border(
-                  top: BorderSide(
-                    color: Colors.black,
-                    width: 0.5,
-                  ),
-                ),
-              ),
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  return Center(
-                    child: Wrap(
-                      alignment: WrapAlignment.center,
-                      crossAxisAlignment: WrapCrossAlignment.center,
-                      spacing: 20,
-                      runSpacing: 20,
-                      children: dices
-                          .map(
-                            (e) => Container(
-                              clipBehavior: Clip.antiAlias,
-                              alignment: Alignment.center,
-                              height: constraints.maxHeight / 3,
-                              width: constraints.maxHeight / 3,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Material(
-                                color: Colors.transparent,
-                                child: SizedBox.expand(
-                                  child: InkWell(
-                                    onTap: () {
-                                      ref
-                                          .read(rollProvider.notifier)
-                                          .addDice(e);
-                                    },
-                                    child: Center(
-                                      child: Text(
-                                        e.name,
-                                        style: const TextStyle(
-                                          fontSize: 22,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          )
-                          .toList(),
-                    ),
-                  );
-                },
-              ),
-            ),
+            child: DiceTray(),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class ActionBar extends ConsumerWidget {
+  const ActionBar({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context, ref) {
+    final currentModifier = ref.watch(rollProvider).modifier;
+    return Container(
+      height: 60,
+      width: double.maxFinite,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: kElevationToShadow[3],
+        border: const Border(
+          top: BorderSide(
+            color: Colors.black,
+            width: 0.5,
+          ),
+        ),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: Center(
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            constraints: const BoxConstraints(maxWidth: 600),
+            width: double.maxFinite,
+            child: Row(
+              children: [
+                IconButton(
+                  onPressed: () {
+                    ref.read(rollProvider.notifier).removeModifier();
+                  },
+                  icon: const Icon(
+                    Icons.remove,
+                  ),
+                ),
+                Container(
+                  alignment: Alignment.center,
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: Colors.black,
+                    ),
+                  ),
+                  child: Text(
+                    currentModifier.toString(),
+                    style: const TextStyle(
+                      fontSize: 20,
+                    ),
+                  ),
+                ),
+                IconButton(
+                  onPressed: () {
+                    ref.read(rollProvider.notifier).addModifier();
+                  },
+                  icon: const Icon(
+                    Icons.add,
+                  ),
+                ),
+                const Spacer(),
+                ElevatedButton.icon(
+                  onPressed: () {
+                    final roll = ref.read(rollProvider);
+                    showDialog(
+                        context: context,
+                        builder: (context) {
+                          return Dialog(
+                            child: SharedRoll(
+                              roll: roll,
+                            ),
+                          );
+                        });
+                  },
+                  label: const Text('Compartilhar'),
+                  icon: const Icon(Icons.share),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class DiceTray extends ConsumerWidget {
+  const DiceTray({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context, ref) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).primaryColor,
+        boxShadow: kElevationToShadow[3],
+        border: const Border(
+          top: BorderSide(
+            color: Colors.black,
+            width: 0.5,
+          ),
+        ),
+      ),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          return Center(
+            child: Wrap(
+              alignment: WrapAlignment.center,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              spacing: 20,
+              runSpacing: 20,
+              children: dices
+                  .map(
+                    (e) => SizedBox(
+                      height: constraints.maxHeight / 3,
+                      width: constraints.maxHeight / 3,
+                      child: DiceWidget(
+                        dice: e,
+                        onTap: () {
+                          ref.read(rollProvider.notifier).addDice(e);
+                        },
+                      ),
+                    ),
+                  )
+                  .toList(),
+            ),
+          );
+        },
       ),
     );
   }
