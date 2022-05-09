@@ -2,8 +2,9 @@ import 'package:dice_share/domain/entities/roll_entity.dart';
 import 'package:dice_share/interface/widgets/dice_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
-const double _shareWidth = 350;
+const double _shareWidth = 320;
 
 class LastRollCard extends StatelessWidget {
   const LastRollCard({
@@ -17,7 +18,7 @@ class LastRollCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: _shareWidth / 2.5,
+      width: double.maxFinite,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -150,7 +151,7 @@ class SharedRoll extends StatelessWidget {
                 ),
               ),
             const Text('Últimas rolagens:'),
-            if (roll.lastRolls.isEmpty)
+            if (roll.lastRolls.isEmpty) ...[
               const Padding(
                 padding: EdgeInsets.all(8.0),
                 child: Center(
@@ -160,29 +161,65 @@ class SharedRoll extends StatelessWidget {
                   ),
                 ),
               ),
+              QrCodeRoll(qrCodeRollData: roll.qrInfo()),
+            ],
             if (roll.lastRolls.isNotEmpty)
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: roll.lastRolls
-                    .map(
-                      (e) => Container(
-                        padding: const EdgeInsets.all(2),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(4),
-                          border: Border.all(
-                            color: Colors.black26,
-                            width: 0.5,
-                          ),
-                        ),
-                        child: LastRollCard(
-                          roll: e,
-                        ),
-                      ),
-                    )
-                    .toList(),
+              Row(
+                children: [
+                  Expanded(
+                    child: ListView(
+                      shrinkWrap: true,
+                      children: roll.lastRolls
+                          .map(
+                            (e) => Container(
+                              margin: const EdgeInsets.symmetric(vertical: 5),
+                              padding: const EdgeInsets.all(2),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(4),
+                                border: Border.all(
+                                  color: Colors.black26,
+                                  width: 0.5,
+                                ),
+                              ),
+                              child: LastRollCard(
+                                roll: e,
+                              ),
+                            ),
+                          )
+                          .toList(),
+                    ),
+                  ),
+                  Expanded(
+                    child: QrCodeRoll(
+                      qrCodeRollData: roll.qrInfo(),
+                    ),
+                  ),
+                ],
               ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class QrCodeRoll extends StatelessWidget {
+  const QrCodeRoll({
+    Key? key,
+    required this.qrCodeRollData,
+  }) : super(key: key);
+
+  final String qrCodeRollData;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: double.maxFinite,
+      height: 120,
+      child: Center(
+        child: QrImage(
+          data: qrCodeRollData,
+          padding: EdgeInsets.zero,
         ),
       ),
     );

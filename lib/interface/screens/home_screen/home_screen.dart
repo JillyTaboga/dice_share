@@ -143,8 +143,16 @@ class ActionBar extends ConsumerWidget {
                       ? () {
                           ref.read(rollProvider.notifier).roll();
                           final roll = ref.read(rollProvider);
-                          ref.read(lastsRollsProvider.notifier).saveRoll(roll);
-                          ref.read(rollProvider.notifier).clear();
+                          showDialog(
+                            context: context,
+                            builder: (context) => Dialog(
+                              child: SharedRoll(
+                                roll: roll,
+                              ),
+                            ),
+                          );
+                          // ref.read(lastsRollsProvider.notifier).saveRoll(roll);
+                          // ref.read(rollProvider.notifier).clear();
                         }
                       : null,
                   label: const Text('Compartilhar'),
@@ -202,18 +210,21 @@ class LastRolls extends ConsumerWidget {
                 shrinkWrap: true,
                 itemBuilder: (context, index) {
                   final roll = lastRolls[index];
-                  return Card(
-                    child: InkWell(
-                      onTap: () {
-                        ref.read(lastsRollsProvider.notifier).shareRoll(
-                              roll,
-                              looked: true,
-                            );
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: LastRollCard(
-                          roll: roll,
+                  return SizedBox(
+                    width: 200,
+                    child: Card(
+                      child: InkWell(
+                        onTap: () {
+                          ref.read(lastsRollsProvider.notifier).shareRoll(
+                                roll,
+                                looked: true,
+                              );
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: LastRollCard(
+                            roll: roll,
+                          ),
                         ),
                       ),
                     ),

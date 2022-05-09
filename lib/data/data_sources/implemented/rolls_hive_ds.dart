@@ -19,9 +19,7 @@ class RollsHiveDS extends RollsDataSource {
     final list = listToCast.map((e) => jsonDecode(e)).toList();
     List<RollEntity> rolls = [];
     if (list.isNotEmpty) {
-      final lastFive = list
-          .getRange((list.length - 6).clamp(0, list.length), list.length)
-          .toList();
+      final lastFive = list.toList();
       rolls = lastFive.map((e) => RollEntity.fromJson(e)).toList();
       rolls.sort((a, b) => b.createdAt.compareTo(a.createdAt));
     }

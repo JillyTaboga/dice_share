@@ -7,19 +7,31 @@
         {
             "name": "dice_share",
             "request": "launch",
-            "type": "dart"
+            "type": "dart",
+            "args": [
+                "--dart-define",
+                "QRKEY=SgVkYp3s6v9y$B&E",
+            ]
         },
         {
             "name": "dice_share (profile mode)",
             "request": "launch",
             "type": "dart",
-            "flutterMode": "profile"
+            "flutterMode": "profile",
+            "args": [
+                "--dart-define",
+                "QRKEY=SgVkYp3s6v9y$B&E",
+            ]
         },
         {
             "name": "dice_share (release mode)",
             "request": "launch",
             "type": "dart",
-            "flutterMode": "release"
+            "flutterMode": "release",
+            "args": [
+                "--dart-define",
+                "QRKEY=SgVkYp3s6v9y$B&E",
+            ]
         }
     ]
 }

@@ -28,7 +28,8 @@ class RollNotifier extends StateNotifier<RollEntity> {
             diceRolls: [],
             createdAt: DateTime.now(),
             modifier: 0,
-            lastRolls: lastRolls,
+            lastRolls:
+                lastRolls.getRange(0, lastRolls.length.clamp(0, 3)).toList(),
           ),
         );
 
@@ -40,7 +41,7 @@ class RollNotifier extends StateNotifier<RollEntity> {
       diceRolls: [],
       createdAt: DateTime.now(),
       modifier: 0,
-      lastRolls: [],
+      lastRolls: lastRolls.getRange(0, lastRolls.length.clamp(0, 3)).toList(),
     );
   }
 
