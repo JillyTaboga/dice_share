@@ -1,7 +1,7 @@
 name: dice_share
 description: Compartilhe jogadas de dados em redes sociais.
 
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
@@ -17,6 +17,9 @@ dependencies:
   json_annotation: ^4.5.0
   flutter_polygon_clipper: ^1.0.4
   intl: ^0.17.0
+  share_plus: ^4.0.4
+  screenshot: ^1.2.3
+  path_provider: ^2.0.9
 
 dev_dependencies:
   flutter_test:

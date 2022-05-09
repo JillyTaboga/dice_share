@@ -17,6 +17,6 @@ DiceRollEntity _$DiceRollEntityFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$DiceRollEntityToJson(DiceRollEntity instance) =>
     <String, dynamic>{
       'guid': instance.guid,
-      'dice': instance.dice,
-      'rolledSide': instance.rolledSide,
+      'dice': instance.dice.toJson(),
+      'rolledSide': instance.rolledSide.toJson(),
     };

@@ -18,7 +18,7 @@ Map<String, dynamic> _$DiceEntityToJson(DiceEntity instance) =>
     <String, dynamic>{
       'guid': instance.guid,
       'name': instance.name,
-      'sides': instance.sides,
+      'sides': instance.sides.map((e) => e.toJson()).toList(),
     };
 
 DiceSideEntity _$DiceSideEntityFromJson(Map<String, dynamic> json) =>

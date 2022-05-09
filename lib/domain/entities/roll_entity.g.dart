@@ -22,7 +22,7 @@ Map<String, dynamic> _$RollEntityToJson(RollEntity instance) =>
     <String, dynamic>{
       'guid': instance.guid,
       'createdAt': instance.createdAt.toIso8601String(),
-      'diceRolls': instance.diceRolls,
+      'diceRolls': instance.diceRolls.map((e) => e.toJson()).toList(),
       'modifier': instance.modifier,
-      'lastRolls': instance.lastRolls,
+      'lastRolls': instance.lastRolls.map((e) => e.toJson()).toList(),
     };

@@ -14,8 +14,8 @@ class DiceResulWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DiceContainer(
-      color: _diceColor(diceRoll.dice),
-      sides: _sidesToPolygon[diceRoll.dice.sides.length] ?? 4,
+      color: diceColor(diceRoll.dice),
+      sides: sidesToPolygon[diceRoll.dice.sides.length] ?? 4,
       child: Center(
         child: Text(
           diceRoll.rolledSide.label,
@@ -42,8 +42,8 @@ class DiceWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DiceContainer(
-      sides: _sidesToPolygon[dice.sides.length] ?? 4,
-      color: _diceColor(dice),
+      sides: sidesToPolygon[dice.sides.length] ?? 4,
+      color: diceColor(dice),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
@@ -108,7 +108,7 @@ class DiceContainer extends StatelessWidget {
   }
 }
 
-Color _diceColor(DiceEntity dice) {
+Color diceColor(DiceEntity dice) {
   switch (dice.name) {
     case 'd4':
       return Colors.green;
@@ -129,7 +129,7 @@ Color _diceColor(DiceEntity dice) {
   }
 }
 
-const Map<int, int> _sidesToPolygon = {
+const Map<int, int> sidesToPolygon = {
   4: 3,
   6: 4,
   8: 5,
