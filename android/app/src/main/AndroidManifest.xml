@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.dice_share">
+    package="com.dice_share">
    <application
-        android:label="dice_share"
+        android:label="Dice Share"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

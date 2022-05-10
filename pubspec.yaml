@@ -30,9 +30,18 @@ dev_dependencies:
   flutter_lints: ^1.0.0
   json_serializable: ^6.2.0
   build_runner: ^2.1.10
+  icons_launcher: ^1.1.7
+
+flutter_icons:
+  image_path: "assets/icon.png"
+  ios: true
+  android: true
 
 flutter:
   uses-material-design: true
+
+assets:
+  - assets/
 
   # To add assets to your application, add an assets section, like this:
   # assets:

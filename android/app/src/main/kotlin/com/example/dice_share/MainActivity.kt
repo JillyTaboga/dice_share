@@ -1,4 +1,4 @@
-package com.example.dice_share
+package com.dice_share
 
 import io.flutter.embedding.android.FlutterActivity
 
