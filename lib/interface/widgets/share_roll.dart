@@ -1,3 +1,4 @@
+import 'package:dice_share/domain/entities/roll_check.dart';
 import 'package:dice_share/domain/entities/roll_entity.dart';
 import 'package:dice_share/interface/widgets/dice_widget.dart';
 import 'package:flutter/material.dart';
@@ -161,7 +162,8 @@ class SharedRoll extends StatelessWidget {
                   ),
                 ),
               ),
-              QrCodeRoll(qrCodeRollData: roll.qrInfo()),
+              QrCodeRoll(
+                  qrCodeRollData: RollCheckEntity.fromRoll(roll).qrInfo()),
             ],
             if (roll.lastRolls.isNotEmpty)
               Row(
@@ -191,7 +193,7 @@ class SharedRoll extends StatelessWidget {
                   ),
                   Expanded(
                     child: QrCodeRoll(
-                      qrCodeRollData: roll.qrInfo(),
+                      qrCodeRollData: RollCheckEntity.fromRoll(roll).qrInfo(),
                     ),
                   ),
                 ],

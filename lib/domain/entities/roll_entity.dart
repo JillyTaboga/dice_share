@@ -1,7 +1,4 @@
-import 'dart:convert';
-
 import 'package:dice_share/domain/entities/dice_entity.dart';
-import 'package:encrypt/encrypt.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:uuid/uuid.dart';
 
@@ -42,28 +39,6 @@ class RollEntity {
   int get total {
     return diceRolls.fold<int>(0, (total, roll) => total + roll.value) +
         modifier;
-  }
-
-  String qrInfo() {
-    final map = copyWith(
-      lastRolls: [],
-    ).toJson();
-    final json = jsonEncode(map);
-    final base64 = base64Encode(utf8.encode(json));
-    final key = Key.fromUtf8(const String.fromEnvironment('QRKEY'));
-    final iv = IV.fromLength(16);
-    final encrypter = Encrypter(AES(key));
-    return encrypter.encrypt(base64, iv: iv).base64;
-  }
-
-  factory RollEntity.fromQr(String qrCode) {
-    final key = Key.fromUtf8(const String.fromEnvironment('QRKEY'));
-    final iv = IV.fromLength(16);
-    final encrypter = Encrypter(AES(key));
-    final base64 = encrypter.decrypt64(qrCode, iv: iv);
-    final json = jsonDecode(base64);
-    final object = jsonDecode(json);
-    return RollEntity.fromJson(object);
   }
 
   factory RollEntity.fromJson(Map<String, dynamic> json) =>

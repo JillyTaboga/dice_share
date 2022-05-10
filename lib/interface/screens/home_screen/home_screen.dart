@@ -1,8 +1,8 @@
 import 'package:dice_share/data/data_bases/dices_types.dart';
 import 'package:dice_share/interface/screens/home_screen/home_screen_controller.dart';
+import 'package:dice_share/interface/widgets/check_roll.dart';
 import 'package:dice_share/interface/widgets/dice_widget.dart';
 import 'package:dice_share/interface/widgets/share_roll.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -98,65 +98,88 @@ class ActionBar extends ConsumerWidget {
         color: Colors.transparent,
         child: Center(
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 10),
             constraints: const BoxConstraints(maxWidth: 600),
             width: double.maxFinite,
             child: Row(
               children: [
-                IconButton(
-                  onPressed: () {
-                    ref.read(rollProvider.notifier).removeModifier();
-                  },
-                  icon: const Icon(
-                    Icons.remove,
+                Expanded(
+                  child: Row(
+                    children: [
+                      IconButton(
+                        onPressed: () {
+                          ref.read(rollProvider.notifier).removeModifier();
+                        },
+                        icon: const Icon(
+                          Icons.remove,
+                        ),
+                      ),
+                      Container(
+                        alignment: Alignment.center,
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: Colors.black,
+                          ),
+                        ),
+                        child: Text(
+                          currentModifier.toString(),
+                          style: const TextStyle(
+                            fontSize: 20,
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          ref.read(rollProvider.notifier).addModifier();
+                        },
+                        icon: const Icon(
+                          Icons.add,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                Container(
-                  alignment: Alignment.center,
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                      color: Colors.black,
+                AspectRatio(
+                  aspectRatio: 1,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: Size.zero,
+                      padding: EdgeInsets.zero,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(99),
+                      ),
+                    ),
+                    onPressed: hasRoll
+                        ? () {
+                            ref.read(rollProvider.notifier).roll();
+                            final roll = ref.read(rollProvider);
+                            ref
+                                .read(lastsRollsProvider.notifier)
+                                .saveRoll(roll);
+                            ref.read(rollProvider.notifier).clear();
+                          }
+                        : null,
+                    child: const Icon(Icons.share),
+                  ),
+                ),
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: IconButton(
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) =>
+                              const Dialog(child: CheckRollWidget()),
+                        );
+                      },
+                      icon: const Icon(Icons.camera),
                     ),
                   ),
-                  child: Text(
-                    currentModifier.toString(),
-                    style: const TextStyle(
-                      fontSize: 20,
-                    ),
-                  ),
-                ),
-                IconButton(
-                  onPressed: () {
-                    ref.read(rollProvider.notifier).addModifier();
-                  },
-                  icon: const Icon(
-                    Icons.add,
-                  ),
-                ),
-                const Spacer(),
-                ElevatedButton.icon(
-                  onPressed: hasRoll
-                      ? () {
-                          ref.read(rollProvider.notifier).roll();
-                          final roll = ref.read(rollProvider);
-                          showDialog(
-                            context: context,
-                            builder: (context) => Dialog(
-                              child: SharedRoll(
-                                roll: roll,
-                              ),
-                            ),
-                          );
-                          // ref.read(lastsRollsProvider.notifier).saveRoll(roll);
-                          // ref.read(rollProvider.notifier).clear();
-                        }
-                      : null,
-                  label: const Text('Compartilhar'),
-                  icon: const Icon(Icons.share),
                 ),
               ],
             ),
@@ -167,70 +190,46 @@ class ActionBar extends ConsumerWidget {
   }
 }
 
-final _scrollController =
-    Provider.autoDispose<ScrollController>((ref) => ScrollController());
-
 class LastRolls extends ConsumerWidget {
   const LastRolls({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final lastRolls = ref.watch(lastsRollsProvider);
-    final scrollController = ref.watch(_scrollController);
     return lastRolls.isEmpty
         ? const SizedBox(
             height: 60,
           )
-        : Listener(
-            onPointerSignal: (signal) {
-              if (signal is PointerScrollEvent) {
-                if (signal.scrollDelta.dy > 0) {
-                  scrollController.animateTo(
-                    scrollController.offset + signal.scrollDelta.dy,
-                    duration: const Duration(milliseconds: 100),
-                    curve: Curves.easeInOut,
-                  );
-                } else {
-                  scrollController.animateTo(
-                    scrollController.offset + signal.scrollDelta.dy,
-                    duration: const Duration(milliseconds: 100),
-                    curve: Curves.easeInOut,
-                  );
-                }
-              }
-            },
-            child: SizedBox(
-              height: 60,
-              width: double.maxFinite,
-              child: ListView.builder(
-                reverse: true,
-                controller: scrollController,
-                scrollDirection: Axis.horizontal,
-                itemCount: lastRolls.length,
-                shrinkWrap: true,
-                itemBuilder: (context, index) {
-                  final roll = lastRolls[index];
-                  return SizedBox(
-                    width: 200,
-                    child: Card(
-                      child: InkWell(
-                        onTap: () {
-                          ref.read(lastsRollsProvider.notifier).shareRoll(
-                                roll,
-                                looked: true,
-                              );
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: LastRollCard(
-                            roll: roll,
-                          ),
+        : SizedBox(
+            height: 60,
+            width: double.maxFinite,
+            child: ListView.builder(
+              reverse: true,
+              scrollDirection: Axis.horizontal,
+              itemCount: lastRolls.length,
+              shrinkWrap: true,
+              itemBuilder: (context, index) {
+                final roll = lastRolls[index];
+                return SizedBox(
+                  width: 200,
+                  child: Card(
+                    child: InkWell(
+                      onTap: () {
+                        ref.read(lastsRollsProvider.notifier).shareRoll(
+                              roll,
+                              looked: true,
+                            );
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: LastRollCard(
+                          roll: roll,
                         ),
                       ),
                     ),
-                  );
-                },
-              ),
+                  ),
+                );
+              },
             ),
           );
   }

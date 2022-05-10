@@ -155,6 +155,7 @@ class LastRollsNotifier extends StateNotifier<List<RollEntity>> {
     await Share.shareFilesWithResult(
       [file.path],
     );
+    await file.delete();
     _setLoaded();
   }
 }
