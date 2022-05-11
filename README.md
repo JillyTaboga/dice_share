@@ -10,3 +10,7 @@ O objetivo do app era poder compartilhar rolagens de dados entre amigos em redes
 - Gradientes posicionais
 - Hive para armazanmento de dados no formato json
 - Qr code para receber dados cryptografados
+
+## Link para a loja
+
+<https://play.google.com/store/apps/details?id=com.dice_share>
