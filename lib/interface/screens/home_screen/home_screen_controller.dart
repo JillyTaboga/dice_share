@@ -148,6 +148,7 @@ class LastRollsNotifier extends StateNotifier<List<RollEntity>> {
         roll: roll,
         looked: looked,
       ),
+      delay: const Duration(seconds: 2),
     );
     final directory = (await getApplicationDocumentsDirectory()).path;
     final file = File('$directory/${roll.guid}.png');
