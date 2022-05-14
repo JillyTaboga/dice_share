@@ -10,7 +10,7 @@
             "type": "dart",
             "args": [
                 "--dart-define",
-                "QRKEY=SgVkYp3s6v9y$B&E",
+                "QRKEY=1L4Xxj5uIRpUqbCv",
             ]
         },
         {
@@ -20,7 +20,7 @@
             "flutterMode": "profile",
             "args": [
                 "--dart-define",
-                "QRKEY=SgVkYp3s6v9y$B&E",
+                "QRKEY=1L4Xxj5uIRpUqbCv",
             ]
         },
         {
@@ -30,7 +30,7 @@
             "flutterMode": "release",
             "args": [
                 "--dart-define",
-                "QRKEY=SgVkYp3s6v9y$B&E",
+                "QRKEY=1L4Xxj5uIRpUqbCv",
             ]
         }
     ]

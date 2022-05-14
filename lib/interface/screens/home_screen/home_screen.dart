@@ -13,6 +13,28 @@ class HomeScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final dicesInRoll =
         ref.watch(rollProvider).diceRolls.map((e) => e.dice).toList();
+    ref.listen<bool>(shareLoadingProvider, (previous, next) {
+      if (previous != next) {
+        if (next) {
+          WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+            showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder: (context) {
+                return const Material(
+                  color: Colors.transparent,
+                  child: Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                );
+              },
+            );
+          });
+        } else {
+          Navigator.of(context).popUntil((route) => route.isFirst);
+        }
+      }
+    });
     final loading = ref.watch(homeLoadigProvider);
     return Scaffold(
       backgroundColor: Colors.grey.shade200,
@@ -159,7 +181,7 @@ class ActionBar extends ConsumerWidget {
                             final roll = ref.read(rollProvider);
                             ref
                                 .read(lastsRollsProvider.notifier)
-                                .saveRoll(roll);
+                                .saveRoll(roll, context: context);
                             ref.read(rollProvider.notifier).clear();
                           }
                         : null,
@@ -217,6 +239,7 @@ class LastRolls extends ConsumerWidget {
                       onTap: () {
                         ref.read(lastsRollsProvider.notifier).shareRoll(
                               roll,
+                              context: context,
                               looked: true,
                             );
                       },

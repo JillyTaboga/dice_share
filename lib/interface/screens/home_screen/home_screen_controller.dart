@@ -6,11 +6,14 @@ import 'package:dice_share/domain/entities/roll_entity.dart';
 import 'package:dice_share/domain/use_cases/get_rolls_use_case.dart';
 import 'package:dice_share/domain/use_cases/save_roll_use_case.dart';
 import 'package:dice_share/interface/widgets/share_roll.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:uuid/uuid.dart';
+
+final shareLoadingProvider = StateProvider<bool>((ref) => false);
 
 final rollProvider = StateNotifierProvider<RollNotifier, RollEntity>((ref) {
   final lastRolls = ref.watch(lastsRollsProvider);
@@ -91,11 +94,11 @@ class RollNotifier extends StateNotifier<RollEntity> {
 
 final lastsRollsProvider =
     StateNotifierProvider<LastRollsNotifier, List<RollEntity>>((ref) {
-  final _getRollsUseCase = ref.watch(getRollsUseCase);
-  final _saveRollUseCase = ref.watch(saveRollLocalUseCase);
+  final getRollsUseCaseLocal = ref.watch(getRollsUseCase);
+  final saveRollUseCase = ref.watch(saveRollLocalUseCase);
   return LastRollsNotifier(
-    _getRollsUseCase,
-    _saveRollUseCase,
+    getRollsUseCaseLocal,
+    saveRollUseCase,
     ref,
   );
 });
@@ -130,33 +133,60 @@ class LastRollsNotifier extends StateNotifier<List<RollEntity>> {
     _setLoaded();
   }
 
-  saveRoll(RollEntity currentRoll) async {
+  saveRoll(
+    RollEntity currentRoll, {
+    required BuildContext context,
+  }) async {
     _setLoading();
     await _saveRollLocalUserCase.call(currentRoll);
-    await shareRoll(currentRoll);
+    await shareRoll(
+      currentRoll,
+      context: context,
+    );
     await getRolls();
   }
 
   shareRoll(
     RollEntity roll, {
     bool looked = false,
+    required BuildContext context,
   }) async {
     final screenCotroller = ScreenshotController();
     _setLoading();
-    final imageData = await screenCotroller.captureFromWidget(
-      SharedRoll(
-        roll: roll,
-        looked: looked,
-      ),
-      delay: const Duration(seconds: 2),
-    );
+    showDialog(
+        context: context,
+        builder: (context) {
+          try {
+            return Dialog(
+              child: Screenshot(
+                controller: screenCotroller,
+                child: SharedRoll(
+                  roll: roll,
+                  looked: looked,
+                ),
+              ),
+            );
+          } catch (e) {
+            return Dialog(
+              child: Text(e.toString()),
+            );
+          }
+        });
+    _ref.read(shareLoadingProvider.notifier).state = true;
     final directory = (await getApplicationDocumentsDirectory()).path;
-    final file = File('$directory/${roll.guid}.png');
-    await file.writeAsBytes(imageData);
-    await Share.shareFilesWithResult(
-      [file.path],
+    final imageData = await screenCotroller.captureAndSave(
+      directory,
+      fileName: 'diceshare.png',
+      delay: const Duration(seconds: 1),
     );
-    await file.delete();
+    if (imageData != null) {
+      await Share.shareFilesWithResult(
+        [imageData],
+      );
+      final file = File(imageData);
+      await file.delete();
+    }
+    _ref.read(shareLoadingProvider.notifier).state = false;
     _setLoaded();
   }
 }
